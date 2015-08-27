@@ -12,9 +12,11 @@ from scrapy.settings.default_settings import LOG_ENABLED, LOG_LEVEL
 
 BOT_NAME = 'immscrapy'
 
-SPIDER_MODULES = ['immscrapy.spiders.indexdocSpider',
-                  'immscrapy.spiders.rssdocSpider']
+SPIDER_MODULES = ['immscrapy.spiders.indexdocspider',
+                  'immscrapy.spiders.rssdocspider']
 NEWSPIDER_MODULE = 'immscrapy.spiders'
 
 LOG_ENABLED = True
 LOG_LEVEL = logging.INFO
+
+AUTOTHROTTLE_ENABLED = True
