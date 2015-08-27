@@ -15,16 +15,20 @@ class indexdocSavePipeline(object):
 
     def process_item(self, item, spider):
         ''' save index doc file '''
-        spider.logger.debug("doc %s save path %s" %
-                           (item['docname'], item['docpath']))
+        if 'indexdocSpider' != spider.name:
+            return item
+        
+        if not item['docvalid']:
+            return None
+        
+        realpath = ospathjoin(spider.savepath, spider.savename, item['docpath'])
+        spider.logger.info("doc %s save path %s" %
+                              (item['docname'], realpath))
 
-        if item['docvalid']:
-            realpath = ospathjoin(spider.savepath, item['docpath'])
-
-            if not os.path.exists(os.path.dirname(realpath)):
-                os.mkdir(os.path.dirname(realpath))
-            with open(realpath, 'wb+') as f:
-                pass
-                #f.write(item['docdata'])
-
+        if not os.path.exists(os.path.dirname(realpath)):
+            os.makedirs(os.path.dirname(realpath))
+        
+        with open(realpath, 'wb+') as f:
+            f.write(item['docdata'])
+                
         return item
