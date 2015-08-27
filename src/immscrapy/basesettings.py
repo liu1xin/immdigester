@@ -8,7 +8,8 @@ Created on 2015年8月26日
 '''
 
 import logging
-from scrapy.settings.default_settings import LOG_ENABLED, LOG_LEVEL
+from scrapy.settings.default_settings import LOG_ENABLED, LOG_LEVEL,\
+    ITEM_PIPELINES
 
 BOT_NAME = 'immscrapy'
 
@@ -17,6 +18,15 @@ SPIDER_MODULES = ['immscrapy.spiders.indexdocspider',
 NEWSPIDER_MODULE = 'immscrapy.spiders'
 
 LOG_ENABLED = True
-LOG_LEVEL = logging.INFO
+LOG_LEVEL = logging.WARNING
 
 AUTOTHROTTLE_ENABLED = True
+
+ITEM_PIPELINES = {
+    'immscrapy.spiders.indexdocspider.indexdocPipeline.indexdocSavePipeline': 200,
+}
+
+
+EXTENSIONS = {
+    'immscrapy.spiders.indexdocspider.indexdocExtension.indexdocExtension': 500,
+}

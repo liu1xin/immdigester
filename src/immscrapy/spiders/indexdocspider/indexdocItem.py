@@ -13,8 +13,7 @@ import scrapy
 class IndexdocItem(scrapy.Item):
     docname = scrapy.Field()
     docurl = scrapy.Field()
-    docsize = scrapy.Field()
+    docpath = scrapy.Field()
+    doctype = scrapy.Field()
     docdata = scrapy.Field()
-    savepath = scrapy.Field()
-    docsave = scrapy.Field()
     docvalid = scrapy.Field()

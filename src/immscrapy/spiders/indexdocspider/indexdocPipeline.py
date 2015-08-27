@@ -8,20 +8,23 @@ Created on 2015年8月26日
 '''
 
 import os.path
+from os.path import join as ospathjoin
 
 
 class indexdocSavePipeline(object):
 
     def process_item(self, item, spider):
         ''' save index doc file '''
-        spider.logger.info("doc %s save path %s" %
-                           (item['docname'], item['savepath']))
+        spider.logger.debug("doc %s save path %s" %
+                           (item['docname'], item['docpath']))
 
-        if not os.path.exists(os.path.dirname(item['savepath'])):
-            os.mkdir(os.path.dirname(item['savepath']))
+        if item['docvalid']:
+            realpath = ospathjoin(spider.savepath, item['docpath'])
 
-        if item['docvalid'] and item['docsave']:
-            with open(item['savepath'], 'wb+') as f:
-                f.write(item['docdata'])
+            if not os.path.exists(os.path.dirname(realpath)):
+                os.mkdir(os.path.dirname(realpath))
+            with open(realpath, 'wb+') as f:
+                pass
+                #f.write(item['docdata'])
 
         return item
