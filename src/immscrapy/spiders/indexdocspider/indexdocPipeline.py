@@ -22,7 +22,7 @@ class indexdocSavePipeline(object):
             return None
         
         realpath = ospathjoin(spider.savepath, spider.savename, item['docpath'])
-        spider.logger.info("doc %s save path %s" %
+        spider.loger.info("doc %s save path %s" %
                               (item['docname'], realpath))
 
         if not os.path.exists(os.path.dirname(realpath)):

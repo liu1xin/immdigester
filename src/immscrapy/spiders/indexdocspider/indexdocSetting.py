@@ -9,12 +9,16 @@ Created on 2015年8月27日
 
 import logging
 
-FILELOG_ENABLE = False
-FILELOG_LEVEL = logging.DEBUG
-FILELOG_NAME = r'd:\indexdoc.log'
+# add file log for indexdocspider
+logfile = r'd:\indexdoc.log'
+filehandle = logging.handlers.FileHandler(logfile)
+filehandle.setLevel(logging.INFO)
+INDEXDOC_LOGEXT = filehandle
 
+# indexdocspider config
 INDEXDOC_ZIP = True
 INDEXDOC_SAVEPATH = r'd:\ttt'
 
+# indexdocspider url config
 INDEXDOC_SKIPPREFIX = ('irc:', 'mailto:', 'http://', 'https://')
 INDEXDOC_SKIPSUFFIX = ('.zip', '.pdf', '.doc', '.tar')

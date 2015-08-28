@@ -7,6 +7,7 @@ Created on 2015年8月26日
 @author: liu1xin@outlook.com
 '''
 
+import logging
 import scrapy
 from indexdocUtils import getbasedomin, checkurlvalid
 from indexdocUtils import createItem, parselinkurl
@@ -23,9 +24,14 @@ class IndexdocspiderSpider(scrapy.Spider):
     def __init__(self, url=None, name=None, *args, **kwargs):
         super(IndexdocspiderSpider, self).__init__(*args, **kwargs)
 
+        # init indexdocspider logger
+        self.loger = logging.getLogger('immscrapy.spiders.indexdocspider')        
+            
         if not checkurlvalid(url):
-            self.logger.warning('not valid url!!')
+            self.loger.warning('<<invalid url = %s>> ' % url)
             return
+        else:
+            self.loger.warning('<<input url = %s>>' % url)
 
         self.base_url = url.rstrip('index.html')
         self.base_domain = getbasedomin(url)
@@ -40,7 +46,7 @@ class IndexdocspiderSpider(scrapy.Spider):
         # self.allowed_domains.append()
 
     def parse(self, response):
-        self.logger.debug('get url %s' % response.url)
+        self.loger.info('get url %s' % response.url)
 
         conttype = response.headers.get('Content-Type', '')
         doc = createItem(response.url, self.base_url)

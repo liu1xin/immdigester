@@ -20,7 +20,7 @@ class indexdocExtension(object):
 
     @classmethod
     def from_crawler(cls, crawler):
-        # load setting for indexdoc
+        # load setting for indexdocspider
         crawler.settings.setmodule('immscrapy.spiders.indexdocspider.indexdocSetting')
 
         # savepath must be config
@@ -32,15 +32,7 @@ class indexdocExtension(object):
 
         # instantiate the extension object
         idxdoc_ext = cls(zipped, savepath)
-
-        if crawler.settings.getbool('FILELOG_ENABLE', False):
-            logfile = crawler.settings.get('FILELOG_NAME', 'indexdoc.log')
-            filehandle = logging.handlers.RotatingFileHandler(logfile)
-            filehandle.setLevel(crawler.settings.get('FILELOG_LEVEL', logging.INFO))
-            idxdoc_ext.loghandle = filehandle
-        else:
-            idxdoc_ext.loghandle = None
-
+        idxdoc_ext.logext = crawler.settings.get('INDEXDOC_LOGEXT', None)
         idxdoc_ext.skippre = crawler.settings.getlist('INDEXDOC_SKIPPREFIX', None)
         idxdoc_ext.skipsuf = crawler.settings.getlist('INDEXDOC_SKIPSUFFIX', None)
         # connect the extension object to signals
@@ -48,19 +40,31 @@ class indexdocExtension(object):
                                 signal=signals.spider_opened)
         crawler.signals.connect(idxdoc_ext.spider_closed,
                                 signal=signals.spider_closed)
+        crawler.signals.connect(idxdoc_ext.item_scraped,
+                                signal=signals.item_scraped)
 
         return idxdoc_ext
 
     def spider_opened(self, spider):
-        spider.logger.info("opened spider %s" % spider.name)
-        if 'indexdocSpider' == spider.name:
-            if not self.loghandle:
-                logger = logging.getLogger('immscrapy.spiders.indexdocspider.indexdocSpider')
-                logger.addHandler(self.loghandle)
+        if 'indexdocSpider' != spider.name:
+            return
+        
+        if None != self.logext:
+            spider.loger.addHandler(self.logext)
 
-            spider.savepath = self.spath
-            spider.skippre = self.skippre
-            spider.skipsuf = self.skipsuf
+        spider.savepath = self.spath
+        spider.skippre = self.skippre
+        spider.skipsuf = self.skipsuf
+
+        spider.loger.info("opened spider %s" % spider.name)
+
 
     def spider_closed(self, spider):
-        spider.logger.info("closed spider %s" % spider.name)
+        spider.loger.info("closed spider %s" % spider.name)
+        if None != self.logext:
+            self.logext.flush()
+            self.logext.close()
+
+    def item_scraped(self, item, spider):
+        if None != self.logext:
+            self.logext.flush()
