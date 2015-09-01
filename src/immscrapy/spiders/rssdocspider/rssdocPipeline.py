@@ -7,6 +7,8 @@ Created on 2015年9月1日
 @author: liu1xin@outlook.com
 '''
 
+from rssdocUtils import itemPrepare, itemSave
+
 
 class rssdocSavePipeline(object):
 
@@ -15,7 +17,7 @@ class rssdocSavePipeline(object):
         if 'rssdocSpider' != spider.name:
             return item
 
-        # savetuple = itemToSavevalue(spider.rssid, item)
-        # saveRssDoc(spider.dbconn, savetuple)
+        itemsave = itemPrepare(spider.outformat, item)
+        itemSave(spider.outdest, itemsave)
 
         return item

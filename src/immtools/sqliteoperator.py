@@ -29,16 +29,14 @@ def executeQuery(dbconn, sql, para=None):
     return cur.fetchall()
 
 
-def executeSql(dbconn, sql):
+def executeSql(dbconn, sql, para=None):
     cur = dbconn.cursor()
-    cur.execute(sql)
+    if para is not None:
+        cur.execute(sql, para)
+    else:
+        cur.execute(sql)
     dbconn.commit()
 
-
-def executeInsert(dbconn, sql, adddic):
-    cur = dbconn.cursor()
-    cur.execute(sql, adddic)
-    dbconn.commit()
 
 if '__main__' == __name__:
     pass

@@ -37,6 +37,8 @@ class RssdocspiderSpider(XMLFeedSpider):
 
         self.rsstype = 'RSS2.0'
         self.encoding = 'utf-8'
+        self.outformat = 1
+        self.outdest = 1
 
     def adapt_response(self, response):
         # 获取应答的RSS相关元信息，重新进行相关设置
@@ -45,8 +47,8 @@ class RssdocspiderSpider(XMLFeedSpider):
         rss_source = [rss for rss in self.rsssource if rss[3] == response.url]
         if rss_source:
             self.loger.info("parse rssid=%d name=%s" %
-                            (rss_source[0], rss_source[2]))
-            self.rssid = rss_source[0]
+                            (rss_source[0][0], rss_source[0][2]))
+            self.rssid = rss_source[0][0]
         else:
             self.rssid = 0
 
@@ -54,10 +56,12 @@ class RssdocspiderSpider(XMLFeedSpider):
 
     def parse_node(self, response, selector):
         rssitem = RssdocItem()
+        rssitem['rssid'] = self.rssid
         rssitem['author'] = selector.xpath('author/text()').extract()
         rssitem['title'] = selector.xpath('title/text()').extract()
         rssitem['url'] = selector.xpath('link/text()').extract()
         rssitem['pubdate'] = selector.xpath('pubDate/text()').extract()
-        # blog['desc'] = selector.select('description').extract()
+        rssitem['desc'] = selector.select('description/text()').extract()
+        rssitem['content'] = ''
 
         return rssitem

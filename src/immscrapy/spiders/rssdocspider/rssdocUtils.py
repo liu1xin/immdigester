@@ -33,6 +33,43 @@ def getRssMeta(response):
     pass
 
 
+def itemPrepare(outformat, item):
+    item_p = None
+    if outformat == rssdocSetting.RSSDOC_OUTFMT_TEXT:
+        pass
+    elif outformat == rssdocSetting.RSSDOC_OUTFMT_TUPLE:
+        item_p = {}
+        item_p['rssid'] = item['rssid']
+        item_p['author'] = item['author'][0]
+        item_p['title'] = item['title'][0]
+        item_p['url'] = item['url'][0]
+        item_p['desc'] = item['desc'][0]
+        item_p['content'] = item['content']
+        item_p['pubdate'] = item['pubdate'][0]
+    elif outformat == rssdocSetting.RSSDOC_OUTFMT_JSON:
+        pass
+    elif outformat == rssdocSetting.RSSDOC_OUTFMT_XML:
+        pass
+    else:
+        pass
+
+    return item_p
+
+
+def itemSave(outdest, itemsave, dbconn=None):
+    if outdest == rssdocSetting.RSSDOC_OUTDEST_FILE:
+        pass
+    elif outdest == rssdocSetting.RSSDOC_OUTDEST_DB:
+        dbconn = getRssDBConn()
+        sql = r'''insert into rss_content(rss_id, pub_date, url, title, content)
+                     values(:rssid, :pubdate, :url, :title, :content)'''
+        sqlopt.executeSql(dbconn, sql, itemsave)
+    else:
+        pass
+
+    return True
+
+
 def getRssDBConn():
     dburl = rssdocSetting.RSSDOC_CONNECTINFO
     dbconn = sqlopt.getDbConn(dburl)
