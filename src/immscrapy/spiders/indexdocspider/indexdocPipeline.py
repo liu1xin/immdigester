@@ -17,18 +17,19 @@ class indexdocSavePipeline(object):
         ''' save index doc file '''
         if 'indexdocSpider' != spider.name:
             return item
-        
+
         if not item['docvalid']:
             return None
-        
-        realpath = ospathjoin(spider.savepath, spider.savename, item['docpath'])
+
+        realpath = ospathjoin(spider.savepath, spider.savename,
+                              item['docpath'])
         spider.loger.info("doc %s save path %s" %
-                              (item['docname'], realpath))
+                          (item['docname'], realpath))
 
         if not os.path.exists(os.path.dirname(realpath)):
             os.makedirs(os.path.dirname(realpath))
-        
+
         with open(realpath, 'wb+') as f:
             f.write(item['docdata'])
-                
+
         return item

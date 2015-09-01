@@ -7,7 +7,6 @@ Created on 2015年8月26日
 @author: liu1xin@outlook.com
 '''
 
-import logging
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
 
@@ -33,8 +32,10 @@ class indexdocExtension(object):
         # instantiate the extension object
         idxdoc_ext = cls(zipped, savepath)
         idxdoc_ext.logext = crawler.settings.get('INDEXDOC_LOGEXT', None)
-        idxdoc_ext.skippre = crawler.settings.getlist('INDEXDOC_SKIPPREFIX', None)
-        idxdoc_ext.skipsuf = crawler.settings.getlist('INDEXDOC_SKIPSUFFIX', None)
+        idxdoc_ext.skippre = crawler.settings.getlist('INDEXDOC_SKIPPREFIX',
+                                                      None)
+        idxdoc_ext.skipsuf = crawler.settings.getlist('INDEXDOC_SKIPSUFFIX',
+                                                      None)
         # connect the extension object to signals
         crawler.signals.connect(idxdoc_ext.spider_opened,
                                 signal=signals.spider_opened)
@@ -48,7 +49,7 @@ class indexdocExtension(object):
     def spider_opened(self, spider):
         if 'indexdocSpider' != spider.name:
             return
-        
+
         if None != self.logext:
             spider.loger.addHandler(self.logext)
 
@@ -58,13 +59,16 @@ class indexdocExtension(object):
 
         spider.loger.info("opened spider %s" % spider.name)
 
-
     def spider_closed(self, spider):
+        if 'indexdocSpider' != spider.name:
+            return
         spider.loger.info("closed spider %s" % spider.name)
         if None != self.logext:
             self.logext.flush()
             self.logext.close()
 
     def item_scraped(self, item, spider):
+        if 'indexdocSpider' != spider.name:
+            return
         if None != self.logext:
             self.logext.flush()

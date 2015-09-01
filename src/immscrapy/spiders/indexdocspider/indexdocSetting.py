@@ -9,9 +9,10 @@ Created on 2015年8月27日
 
 import logging
 
+
 # add file log for indexdocspider
 logfile = r'd:\indexdoc.log'
-filehandle = logging.handlers.FileHandler(logfile)
+filehandle = logging.handlers.RotatingFileHandler(logfile)
 filehandle.setLevel(logging.INFO)
 INDEXDOC_LOGEXT = filehandle
 

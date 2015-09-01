@@ -25,8 +25,8 @@ class IndexdocspiderSpider(scrapy.Spider):
         super(IndexdocspiderSpider, self).__init__(*args, **kwargs)
 
         # init indexdocspider logger
-        self.loger = logging.getLogger('immscrapy.spiders.indexdocspider')        
-            
+        self.loger = logging.getLogger('immscrapy.spiders.indexdocspider')
+
         if not checkurlvalid(url):
             self.loger.warning('<<invalid url = %s>> ' % url)
             return
