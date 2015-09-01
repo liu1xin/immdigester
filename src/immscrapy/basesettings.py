@@ -18,15 +18,17 @@ SPIDER_MODULES = ['immscrapy.spiders.indexdocspider',
 NEWSPIDER_MODULE = 'immscrapy.spiders'
 
 LOG_ENABLED = True
-LOG_LEVEL = logging.WARNING
+LOG_LEVEL = logging.DEBUG
 
 AUTOTHROTTLE_ENABLED = True
 
 ITEM_PIPELINES = {
     'immscrapy.spiders.indexdocspider.indexdocPipeline.indexdocSavePipeline': 200,
+    'immscrapy.spiders.rssdocspider.rssdocPipeline.rssdocSavePipeline': 300,
 }
 
 
 EXTENSIONS = {
     'immscrapy.spiders.indexdocspider.indexdocExtension.indexdocExtension': 500,
+    'immscrapy.spiders.rssdocspider.rssdocExtension.rssdocExtension': 600,
 }

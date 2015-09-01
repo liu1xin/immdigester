@@ -29,9 +29,11 @@ class RssdocspiderSpider(XMLFeedSpider):
             self.loger.warning('<<invalid uid = %s>> ' % uid)
             return
         else:
-            rsssource = getRssSource(self.dbconn)
+            self.loger.warning('<<get uid = %s>>' % uid)
+            rsssource = getRssSource(uid)
             self.start_urls.extend([rss[3] for rss in rsssource])
             self.rsssource = rsssource
+            self.uid = uid
 
         self.rsstype = 'RSS2.0'
         self.encoding = 'utf-8'
@@ -40,10 +42,13 @@ class RssdocspiderSpider(XMLFeedSpider):
         # 获取应答的RSS相关元信息，重新进行相关设置
         getRssMeta(response)
 
-        rss_source = [rss for rss in self.rsssource if rss[3] == response.url][0]
-        self.loger.info("parse rssid=%d name=%s" %
-                        (rss_source[0], rss_source[2]))
-        self.rssid = rss_source[0]
+        rss_source = [rss for rss in self.rsssource if rss[3] == response.url]
+        if rss_source:
+            self.loger.info("parse rssid=%d name=%s" %
+                            (rss_source[0], rss_source[2]))
+            self.rssid = rss_source[0]
+        else:
+            self.rssid = 0
 
         return XMLFeedSpider.adapt_response(self, response)
 

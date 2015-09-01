@@ -12,7 +12,10 @@ class rssdocSavePipeline(object):
 
     def process_item(self, item, spider):
 
-        savetuple = itemToSavevalue(spider.rssid, item)
-        saveRssDoc(spider.dbconn, savetuple)
+        if 'rssdocSpider' != spider.name:
+            return item
+
+        # savetuple = itemToSavevalue(spider.rssid, item)
+        # saveRssDoc(spider.dbconn, savetuple)
 
         return item

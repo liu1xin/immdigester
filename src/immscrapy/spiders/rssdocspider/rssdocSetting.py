@@ -10,13 +10,16 @@ Created on 2015年9月1日
 import logging
 
 
-# add file log for indexdocspider
+# add file log for rssdocspider
 logfile = r'd:\rssdoc.log'
 filehandle = logging.handlers.RotatingFileHandler(logfile)
 filehandle.setLevel(logging.INFO)
-RSSDOC_LOGEXT = filehandle
+RSSDOC_LOGEXT = None
 
-# indexdocspider config
+RSSDOC_SOURCETYPE = 2
+RSSDOC_SOURCEURL = r'http://www.infoq.com/cn/feed'
+
+# rssdocspider db config
 RSSDOC_DBTYPE = 'sqlite3'
-RSSDOC_CONNECT = r'imm.db'
-RSSDOC_DATANAME = r'imm.db'
+RSSDOC_CONNECTINFO = r'../data/imm.db'
+RSSDOC_DBNAME = r'imm_db'
