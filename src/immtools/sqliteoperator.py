@@ -26,6 +26,7 @@ def executeQuery(dbconn, sql, para=None):
         cur.execute(sql, para)
     else:
         cur.execute(sql)
+
     return cur.fetchall()
 
 
@@ -36,6 +37,8 @@ def executeSql(dbconn, sql, para=None):
     else:
         cur.execute(sql)
     dbconn.commit()
+
+    return True
 
 
 if '__main__' == __name__:

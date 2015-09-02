@@ -10,7 +10,7 @@ Created on 2015年9月1日
 import logging
 from scrapy.spiders import XMLFeedSpider
 from rssdocItem import RssdocItem
-from rssdocUtils import getRssSource, getRssMeta
+from rssdocUtils import getRssSources, getRssMeta
 
 
 class RssdocspiderSpider(XMLFeedSpider):
@@ -30,26 +30,37 @@ class RssdocspiderSpider(XMLFeedSpider):
             return
         else:
             self.loger.warning('<<get uid = %s>>' % uid)
-            rsssource = getRssSource(uid)
-            self.start_urls.extend([rss[3] for rss in rsssource])
-            self.rsssource = rsssource
-            self.uid = uid
+            rsssources = getRssSources(uid)
+            if 0 == len(rsssources):
+                self.loger.warning('rsssource not found for uid = %s!' % uid)
+                return
+            else:
+                for record in rsssources:
+                    self.loger.info('rssid=%s url=[%s]' % (record.id, record.url))
+                self.start_urls.extend([record.url for record in rsssources])
+                self.rsssources = rsssources
 
+        self.uid = uid
         self.rsstype = 'RSS2.0'
         self.encoding = 'utf-8'
-        self.outformat = 1
-        self.outdest = 1
+        self.outformat = 0
+        self.outdest = 0
 
     def adapt_response(self, response):
         # 获取应答的RSS相关元信息，重新进行相关设置
         getRssMeta(response)
 
-        rss_source = [rss for rss in self.rsssource if rss[3] == response.url]
-        if rss_source:
+        rss_record_list = [record for record in self.rsssources
+                           if record.url == response.url]
+
+        if 1 == len(rss_record_list):
+            rss_record = rss_record_list[0]
             self.loger.info("parse rssid=%d name=%s" %
-                            (rss_source[0][0], rss_source[0][2]))
-            self.rssid = rss_source[0][0]
+                            (rss_record.id, rss_record.name))
+            self.rssid = rss_record.id
         else:
+            self.loger.warning('rsssource not found for url = %s!'
+                               % response.url)
             self.rssid = 0
 
         return XMLFeedSpider.adapt_response(self, response)
@@ -57,11 +68,12 @@ class RssdocspiderSpider(XMLFeedSpider):
     def parse_node(self, response, selector):
         rssitem = RssdocItem()
         rssitem['rssid'] = self.rssid
-        rssitem['author'] = selector.xpath('author/text()').extract()
-        rssitem['title'] = selector.xpath('title/text()').extract()
-        rssitem['url'] = selector.xpath('link/text()').extract()
-        rssitem['pubdate'] = selector.xpath('pubDate/text()').extract()
-        rssitem['desc'] = selector.select('description/text()').extract()
-        rssitem['content'] = ''
+        if 'RSS2.0' == self.rsstype:
+            rssitem['author'] = selector.xpath('author/text()').extract()
+            rssitem['title'] = selector.xpath('title/text()').extract()
+            rssitem['url'] = selector.xpath('link/text()').extract()
+            rssitem['pubdate'] = selector.xpath('pubDate/text()').extract()
+            rssitem['desc'] = selector.select('description/text()').extract()
+            rssitem['content'] = ''
 
         return rssitem

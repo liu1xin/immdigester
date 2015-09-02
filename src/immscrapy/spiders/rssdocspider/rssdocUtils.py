@@ -7,21 +7,27 @@ Created on 2015年9月1日
 @author: liu1xin@outlook.com
 '''
 
+from collections import namedtuple
 import immtools.sqliteoperator as sqlopt
 import rssdocSetting
 
+RS_RECORD = namedtuple('RS_RECORD', 'id uid name url')
 
-def getRssSource(uid):
+
+def getRssSources(uid):
     result = []
 
     if 1 == rssdocSetting.RSSDOC_SOURCETYPE:
-        result.append((0, uid, u'TESTURL', rssdocSetting.RSSDOC_SOURCEURL))
+        result.append(RS_RECORD(0, uid, u'TESTURL',
+                                rssdocSetting.RSSDOC_SOURCEURL))
     elif 2 == rssdocSetting.RSSDOC_SOURCETYPE:
         dbconn = getRssDBConn()
         query_sql = r'''select id, user_id uid, name,url from rss_source
                      where tag=1 and user_id=:uid'''
         query_para = {'uid': uid}
-        result = sqlopt.executeQuery(dbconn, query_sql, query_para)
+        rows = sqlopt.executeQuery(dbconn, query_sql, query_para)
+        for row in rows:
+            result.append(RS_RECORD(row[0], row[1], row[2], row[3]))
         sqlopt.closeDbConn(dbconn)
     else:
         result = []

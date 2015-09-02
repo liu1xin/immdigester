@@ -13,9 +13,9 @@ from scrapy.exceptions import NotConfigured
 
 class rssdocExtension(object):
 
-    def __init__(self, zipped, savepath):
-        self.zipp = zipped
-        self.spath = savepath
+    def __init__(self, outdest, outfmt):
+        self.outfmt = outfmt
+        self.outdest = outdest
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -26,11 +26,11 @@ class rssdocExtension(object):
         if not crawler.settings.get('INDEXDOC_SAVEPATH'):
             raise NotConfigured
 
-        zipped = crawler.settings.getbool('INDEXDOC_ZIP', True)
-        savepath = crawler.settings.get('INDEXDOC_SAVEPATH', '')
+        outdest = crawler.settings.getint('RSSDOC_OUTDEST', 0)
+        outfmt = crawler.settings.getint('RSSDOC_OUTFMT', 0)
 
         # instantiate the extension object
-        rssdoc_ext = cls(zipped, savepath)
+        rssdoc_ext = cls(outdest, outfmt)
         rssdoc_ext.logext = crawler.settings.get('RSSDOC_LOGEXT', None)
         # connect the extension object to signals
         crawler.signals.connect(rssdoc_ext.spider_opened,
@@ -48,6 +48,9 @@ class rssdocExtension(object):
 
         if None != self.logext:
             spider.loger.addHandler(self.logext)
+
+        spider.outformat = self.outfmt
+        spider.outdest = self.outdest
 
         spider.loger.info("opened spider %s" % spider.name)
 
