@@ -14,21 +14,19 @@ import rssdocSetting
 RS_RECORD = namedtuple('RS_RECORD', 'id uid name url')
 
 
-def getRssSources(uid):
+def getRssSources(uid, dbconn=None):
     result = []
 
     if 1 == rssdocSetting.RSSDOC_SOURCETYPE:
         result.append(RS_RECORD(0, uid, u'TESTURL',
                                 rssdocSetting.RSSDOC_SOURCEURL))
     elif 2 == rssdocSetting.RSSDOC_SOURCETYPE:
-        dbconn = getRssDBConn()
         query_sql = r'''select id, user_id uid, name,url from rss_source
                      where tag=1 and user_id=:uid'''
         query_para = {'uid': uid}
         rows = sqlopt.executeQuery(dbconn, query_sql, query_para)
         for row in rows:
             result.append(RS_RECORD(row[0], row[1], row[2], row[3]))
-        sqlopt.closeDbConn(dbconn)
     else:
         result = []
 
@@ -39,37 +37,44 @@ def getRssMeta(response):
     pass
 
 
-def itemPrepare(outformat, item):
-    item_p = None
-    if outformat == rssdocSetting.RSSDOC_OUTFMT_TEXT:
-        pass
-    elif outformat == rssdocSetting.RSSDOC_OUTFMT_TUPLE:
-        item_p = {}
-        item_p['rssid'] = item['rssid']
-        item_p['author'] = item['author'][0]
-        item_p['title'] = item['title'][0]
-        item_p['url'] = item['url'][0]
-        item_p['desc'] = item['desc'][0]
-        item_p['content'] = item['content']
-        item_p['pubdate'] = item['pubdate'][0]
-    elif outformat == rssdocSetting.RSSDOC_OUTFMT_JSON:
-        pass
-    elif outformat == rssdocSetting.RSSDOC_OUTFMT_XML:
-        pass
-    else:
-        pass
+def rssdocItemReady(outformat, item):
+    item_out = {}
+    item_out['guid'] = item['guid']
+    item_out['rssid'] = item['rssid']
+    item_out['author'] = item['author']
+    item_out['title'] = item['title']
+    item_out['url'] = item['url']
+    item_out['desc'] = item['desc']
+    item_out['content'] = item['desc']
+    item_out['pubdate'] = item['pubdate']
+    item_out['category'] = item['category']
 
-    return item_p
+    if item_out['guid'] is None:
+        item_out['guid'] = item_out['url']
+    if item_out['category'] is None:
+        item_out['category'] = ''
+
+    return item_out
 
 
-def itemSave(outdest, itemsave, dbconn=None):
-    if outdest == rssdocSetting.RSSDOC_OUTDEST_FILE:
+def rssdocItemSave(outdest, itemsave, dbconn=None):
+    if rssdocSetting.RSSDOC_OUTDEST_NULL == outdest:
+        return True
+    elif rssdocSetting.RSSDOC_OUTDEST_DB == outdest:
+        if dbconn is not None:
+            sql = r'''select id from rss_content
+                        where guid=:guid and rss_id=:rssid'''
+            qresult = sqlopt.executeQuery(dbconn, sql, itemsave)
+            if qresult is not None and 1 == len(qresult):
+                return True
+            sql = r'''insert into rss_content(guid, rss_id, pub_date, url,
+                title, content, category) values(:guid, :rssid, :pubdate,
+                :url, :title, :content, :category)'''
+            sqlopt.executeSql(dbconn, sql, itemsave)
+        else:
+            return False
+    elif rssdocSetting.RSSDOC_OUTDEST_FILE == outdest:
         pass
-    elif outdest == rssdocSetting.RSSDOC_OUTDEST_DB:
-        dbconn = getRssDBConn()
-        sql = r'''insert into rss_content(rss_id, pub_date, url, title, content)
-                     values(:rssid, :pubdate, :url, :title, :content)'''
-        sqlopt.executeSql(dbconn, sql, itemsave)
     else:
         pass
 

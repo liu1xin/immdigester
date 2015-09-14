@@ -7,7 +7,7 @@ Created on 2015年9月1日
 @author: liu1xin@outlook.com
 '''
 
-from rssdocUtils import itemPrepare, itemSave
+from rssdocUtils import rssdocItemReady, rssdocItemSave
 
 
 class rssdocSavePipeline(object):
@@ -17,7 +17,12 @@ class rssdocSavePipeline(object):
         if 'rssdocSpider' != spider.name:
             return item
 
-        itemsave = itemPrepare(spider.outformat, item)
-        itemSave(spider.outdest, itemsave)
+        itemready = rssdocItemReady(spider.outformat, item)
+
+        result = rssdocItemSave(spider.outdest, itemready, spider.dbconn)
+        if True == result:
+            spider.loger.info('save rssdoc item success!')
+        else:
+            spider.loger.warning('save rssdoc item fail!')
 
         return item

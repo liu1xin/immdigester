@@ -9,6 +9,7 @@ Created on 2015年9月1日
 
 from scrapy import signals
 from scrapy.exceptions import NotConfigured
+from rssdocUtils import closeRssDBConn
 
 
 class rssdocExtension(object):
@@ -22,8 +23,8 @@ class rssdocExtension(object):
         # load setting for indexdocspider
         crawler.settings.setmodule('immscrapy.spiders.rssdocspider.rssdocSetting')
 
-        # savepath must be config
-        if not crawler.settings.get('INDEXDOC_SAVEPATH'):
+        # sourcetype must be config
+        if not crawler.settings.getint('RSSDOC_SOURCETYPE'):
             raise NotConfigured
 
         outdest = crawler.settings.getint('RSSDOC_OUTDEST', 0)
@@ -32,6 +33,7 @@ class rssdocExtension(object):
         # instantiate the extension object
         rssdoc_ext = cls(outdest, outfmt)
         rssdoc_ext.logext = crawler.settings.get('RSSDOC_LOGEXT', None)
+
         # connect the extension object to signals
         crawler.signals.connect(rssdoc_ext.spider_opened,
                                 signal=signals.spider_opened)
@@ -59,6 +61,8 @@ class rssdocExtension(object):
             return
 
         spider.loger.info("closed spider %s" % spider.name)
+        if None != spider.dbconn:
+            closeRssDBConn(spider.dbconn)
         if None != self.logext:
             self.logext.flush()
             self.logext.close()

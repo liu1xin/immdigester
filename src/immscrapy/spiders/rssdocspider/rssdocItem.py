@@ -12,6 +12,7 @@ import scrapy
 
 class RssdocItem(scrapy.Item):
     rssid = scrapy.Field()
+    guid = scrapy.Field()
     author = scrapy.Field()
     title = scrapy.Field()
     url = scrapy.Field()
