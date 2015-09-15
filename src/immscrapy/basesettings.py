@@ -30,5 +30,4 @@ ITEM_PIPELINES = {
 
 EXTENSIONS = {
     'immscrapy.spiders.indexdocspider.indexdocExtension.indexdocExtension': 500,
-    'immscrapy.spiders.rssdocspider.rssdocExtension.rssdocExtension': 600,
 }

@@ -9,8 +9,10 @@ Created on 2015年9月1日
 
 import logging
 from scrapy.spiders import XMLFeedSpider
-from rssdocItem import RssdocItem
-from rssdocUtils import getRssSources, getRssMeta, getRssDBConn
+from immscrapy.spiders.rssdocspider.rssdocItem import RssdocItem
+from immscrapy.spiders.rssdocspider.rssdocUtils import (getRssSources,
+                                                        getRssMeta,
+                                                        getRssDBConn)
 
 
 class RssdocspiderSpider(XMLFeedSpider):
@@ -44,8 +46,6 @@ class RssdocspiderSpider(XMLFeedSpider):
 
         self.rsstype = 'RSS2.0'
         self.encoding = 'utf-8'
-        self.outformat = 1
-        self.outdest = 1
 
     def adapt_response(self, response):
         # 获取应答的RSS相关元信息，重新进行相关设置

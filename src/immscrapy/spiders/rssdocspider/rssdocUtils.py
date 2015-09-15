@@ -8,8 +8,13 @@ Created on 2015年9月1日
 '''
 
 from collections import namedtuple
+from immscrapy.spiders.rssdocspider import (RSSDOC_OUTDEST_NULL,
+                                            RSSDOC_OUTDEST_DB,
+                                            RSSDOC_OUTDEST_FILE,
+                                            RSSDOC_OUTFMT_NULL)
+import immscrapy.spiders.rssdocspider.rssdocSetting as rsssetting
 import immtools.sqliteoperator as sqlopt
-import rssdocSetting
+
 
 RS_RECORD = namedtuple('RS_RECORD', 'id uid name url')
 
@@ -17,10 +22,10 @@ RS_RECORD = namedtuple('RS_RECORD', 'id uid name url')
 def getRssSources(uid, dbconn=None):
     result = []
 
-    if 1 == rssdocSetting.RSSDOC_SOURCETYPE:
+    if 1 == rsssetting.RSSDOC_SOURCETYPE:
         result.append(RS_RECORD(0, uid, u'TESTURL',
-                                rssdocSetting.RSSDOC_SOURCEURL))
-    elif 2 == rssdocSetting.RSSDOC_SOURCETYPE:
+                                rsssetting.RSSDOC_SOURCEURL))
+    elif 2 == rsssetting.RSSDOC_SOURCETYPE:
         query_sql = r'''select id, user_id uid, name,url from rss_source
                      where tag=1 and user_id=:uid'''
         query_para = {'uid': uid}
@@ -38,6 +43,9 @@ def getRssMeta(response):
 
 
 def rssdocItemReady(outformat, item):
+    if RSSDOC_OUTFMT_NULL == outformat:
+        return None
+
     item_out = {}
     item_out['guid'] = item['guid']
     item_out['rssid'] = item['rssid']
@@ -58,9 +66,9 @@ def rssdocItemReady(outformat, item):
 
 
 def rssdocItemSave(outdest, itemsave, dbconn=None):
-    if rssdocSetting.RSSDOC_OUTDEST_NULL == outdest:
+    if RSSDOC_OUTDEST_NULL == outdest:
         return True
-    elif rssdocSetting.RSSDOC_OUTDEST_DB == outdest:
+    elif RSSDOC_OUTDEST_DB == outdest:
         if dbconn is not None:
             sql = r'''select id from rss_content
                         where guid=:guid and rss_id=:rssid'''
@@ -73,7 +81,7 @@ def rssdocItemSave(outdest, itemsave, dbconn=None):
             sqlopt.executeSql(dbconn, sql, itemsave)
         else:
             return False
-    elif rssdocSetting.RSSDOC_OUTDEST_FILE == outdest:
+    elif RSSDOC_OUTDEST_FILE == outdest:
         pass
     else:
         pass
@@ -82,7 +90,7 @@ def rssdocItemSave(outdest, itemsave, dbconn=None):
 
 
 def getRssDBConn():
-    dburl = rssdocSetting.RSSDOC_CONNECTINFO
+    dburl = rsssetting.RSSDOC_CONNECTINFO
     dbconn = sqlopt.getDbConn(dburl)
     return dbconn
 

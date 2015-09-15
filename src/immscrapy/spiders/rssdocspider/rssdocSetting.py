@@ -16,22 +16,16 @@ filehandle = logging.handlers.RotatingFileHandler(logfile)
 filehandle.setLevel(logging.INFO)
 RSSDOC_LOGEXT = None
 
+# rssdocspider input config
 RSSDOC_SOURCETYPE = 2
 RSSDOC_SOURCEURL = r'http://www.infoq.com/cn/feed'
-RSSDOC_DESTFILE = r''
 
 # rssdocspider db config
 RSSDOC_DBTYPE = 'sqlite3'
 RSSDOC_CONNECTINFO = r'../data/imm.db'
 RSSDOC_DBNAME = r'imm_db'
 
+# rssdocspider output config
 RSSDOC_OUTDEST = 1
 RSSDOC_OUTFMT = 1
-
-RSSDOC_OUTFMT_TUPLE = 1
-RSSDOC_OUTFMT_TEXT = 2
-RSSDOC_OUTFMT_JSON = 3
-
-RSSDOC_OUTDEST_NULL = 0
-RSSDOC_OUTDEST_DB = 1
-RSSDOC_OUTDEST_FILE = 2
+RSSDOC_DESTFILE = r''
