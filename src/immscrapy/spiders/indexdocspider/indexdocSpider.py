@@ -9,8 +9,10 @@ Created on 2015年8月26日
 
 import logging
 import scrapy
-from indexdocUtils import getbasedomin, checkurlvalid
-from indexdocUtils import createItem, parselinkurl
+from immscrapy.spiders.indexdocspider.indexdocUtils import (getbasedomin,
+                                                            checkurlvalid)
+from immscrapy.spiders.indexdocspider.indexdocUtils import (createItem,
+                                                            parselinkurl)
 
 
 class IndexdocspiderSpider(scrapy.Spider):
@@ -43,7 +45,6 @@ class IndexdocspiderSpider(scrapy.Spider):
 
         self.allowed_domains.append(self.base_domain)
         self.start_urls.append(url)
-        # self.allowed_domains.append()
 
     def parse(self, response):
         self.loger.info('get url %s' % response.url)

@@ -26,8 +26,3 @@ ITEM_PIPELINES = {
     'immscrapy.spiders.indexdocspider.indexdocPipeline.indexdocSavePipeline': 200,
     'immscrapy.spiders.rssdocspider.rssdocPipeline.rssdocSavePipeline': 300,
 }
-
-
-EXTENSIONS = {
-    'immscrapy.spiders.indexdocspider.indexdocExtension.indexdocExtension': 500,
-}

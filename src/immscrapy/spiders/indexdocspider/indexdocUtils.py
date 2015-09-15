@@ -11,7 +11,7 @@ import urlparse
 import urllib2
 import os.path
 from os.path import split as ospathsplit
-from indexdocItem import IndexdocItem
+from immscrapy.spiders.indexdocspider.indexdocItem import IndexdocItem
 
 
 def checkurlvalid(url):
